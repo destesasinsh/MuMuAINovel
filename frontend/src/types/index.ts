@@ -167,6 +167,8 @@ export interface Project {
   wizard_status?: 'incomplete' | 'completed';
   wizard_step?: number;
   outline_mode: 'one-to-one' | 'one-to-many';  // 大纲章节模式
+  creation_mode?: 'classic' | 'storycard';  // 创作模式：原模式 / 故事卡牌模式
+  storycard_revision?: number;
   world_time_period?: string;
   world_location?: string;
   world_atmosphere?: string;
@@ -190,6 +192,7 @@ export interface ProjectCreate {
   genre?: string;
   target_words?: number;
   outline_mode?: 'one-to-one' | 'one-to-many';  // 大纲章节模式,默认one-to-many
+  creation_mode?: 'classic' | 'storycard';  // 创作模式，默认 classic
   wizard_status?: 'incomplete' | 'completed';
   wizard_step?: number;
   world_time_period?: string;

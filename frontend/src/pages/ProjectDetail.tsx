@@ -22,6 +22,7 @@ import {
   ThunderboltOutlined,
   SettingOutlined,
   DatabaseOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import { useStore } from '../store';
 import { useCharacterSync, useOutlineSync, useChapterSync } from '../store/hooks';
@@ -159,6 +160,15 @@ export default function ProjectDetail() {
       label: <Link to={`/project/${projectId}/sponsor`}>赞助支持</Link>,
     },
     {
+      key: 'storycard',
+      icon: <AppstoreOutlined />,
+      label: (
+        <Link to={`/project/${projectId}/storycard`}>
+          {currentProject?.creation_mode === 'storycard' ? '故事卡牌工作台' : '故事卡牌（导入原模式）'}
+        </Link>
+      ),
+    },
+    {
       type: 'group' as const,
       label: '创作管理',
       children: [
@@ -249,6 +259,11 @@ export default function ProjectDetail() {
       label: <Link to={`/project/${projectId}/sponsor`}>赞助支持</Link>,
     },
     {
+      key: 'storycard',
+      icon: <AppstoreOutlined />,
+      label: <Link to={`/project/${projectId}/storycard`}>故事卡牌</Link>,
+    },
+    {
       key: 'world-setting',
       icon: <GlobalOutlined />,
       label: <Link to={`/project/${projectId}/world-setting`}>世界设定</Link>,
@@ -337,6 +352,7 @@ export default function ProjectDetail() {
     if (path.includes('/prompt-workshop')) return 'prompt-workshop';
     if (path.includes('/skill-chat')) return 'skill-chat';
     if (path.includes('/skill-manage')) return 'skill-manage';
+    if (path.includes('/storycard')) return 'storycard';
     if (path.includes('/sponsor')) return 'sponsor';
     // if (path.includes('/polish')) return 'polish';
     return 'sponsor'; // 默认选中赞助支持

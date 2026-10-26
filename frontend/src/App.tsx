@@ -1,8 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import ProjectList from './pages/ProjectList';
 import ProjectWizardNew from './pages/ProjectWizardNew';
 import Inspiration from './pages/Inspiration';
 import ProjectDetail from './pages/ProjectDetail';
+import ProjectHome from './pages/ProjectHome';
 import WorldSetting from './pages/WorldSetting';
 import Outline from './pages/Outline';
 import Characters from './pages/Characters';
@@ -32,17 +34,24 @@ import AppFooter from './components/AppFooter';
 import SpringFestival from './components/SpringFestival';
 import './App.css';
 
+const StoryCardWorkspace = lazy(() => import('./storycard/StoryCardWorkspace'));
+
+function GlobalDecorations() {
+  const location = useLocation();
+  if (location.pathname.includes('/storycard')) return null;
+  return <SpringFestival />;
+}
+
 function App() {
   return (
     <>
-      {/* 🧧 春节喜庆装饰 */}
-      <SpringFestival />
       <BrowserRouter
         future={{
           v7_startTransition: true,
           v7_relativeSplatPath: true,
         }}
       >
+        <GlobalDecorations />
         <Routes>
           <Route path="/login" element={<><Login /><AppFooter /></>} />
           <Route path="/auth/callback" element={<AuthCallback />} />
@@ -56,8 +65,18 @@ function App() {
           <Route path="/mcp-plugins" element={<ProtectedRoute><MCPPlugins /></ProtectedRoute>} />
           <Route path="/user-management" element={<ProtectedRoute><UserManagement /></ProtectedRoute>} />
           <Route path="/chapters/:chapterId/reader" element={<ProtectedRoute><ChapterReader /></ProtectedRoute>} />
+          <Route
+            path="/project/:projectId/storycard"
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>正在打开故事卡牌工作区…</div>}>
+                  <StoryCardWorkspace />
+                </Suspense>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/project/:projectId" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>}>
-            <Route index element={<Navigate to="sponsor" replace />} />
+            <Route index element={<ProjectHome />} />
             <Route path="world-setting" element={<WorldSetting />} />
             <Route path="knowledge-base" element={<KnowledgeBase />} />
             <Route path="careers" element={<Careers />} />

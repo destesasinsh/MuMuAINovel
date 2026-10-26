@@ -209,7 +209,8 @@ from app.api import (
     auth, users, settings, writing_styles, memories,
     mcp_plugins, admin, inspiration, prompt_templates,
     changelog, careers, foreshadows, prompt_workshop, book_import,
-    project_covers, project_agent, tasks, skills, announcements, knowledge
+    project_covers, project_agent, tasks, skills, announcements, knowledge,
+    storycard,
 )
 
 app.include_router(auth.router, prefix="/api")
@@ -241,6 +242,7 @@ app.include_router(book_import.router, prefix="/api")  # 拆书导入API
 app.include_router(tasks.router, prefix="/api")  # 后台任务API
 app.include_router(announcements.router, prefix="/api")
 app.include_router(knowledge.router)  # local knowledge base API
+app.include_router(storycard.router, prefix="/api")  # 故事卡牌模式
 
 if getattr(sys, "frozen", False):
     static_dir = Path(sys._MEIPASS) / "backend" / "static"

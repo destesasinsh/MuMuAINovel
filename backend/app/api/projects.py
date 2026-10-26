@@ -16,6 +16,7 @@ from app.models.relationship import CharacterRelationship, Organization, Organiz
 from app.models.memory import StoryMemory, PlotAnalysis
 from app.models.foreshadow import Foreshadow
 from app.models.career import Career, CharacterCareer
+from app.models.storycard import StoryCard, StoryCardEdge, StoryChain, StoryChapter
 from app.models.analysis_task import AnalysisTask
 from app.models.batch_generation_task import BatchGenerationTask
 from app.schemas.project import (
@@ -60,13 +61,29 @@ async def create_project(
         # 创建项目时自动设置user_id
         project_data = project.model_dump()
         project_data['user_id'] = user_id
+        if project_data.get('creation_mode') == 'storycard':
+            # 卡牌模式不走四步向导，直接进入工作台
+            project_data['wizard_status'] = 'completed'
+            project_data['wizard_step'] = 4
+            project_data['status'] = 'writing'
         db_project = Project(**project_data)
         
         db.add(db_project)
         await db.commit()
         await db.refresh(db_project)
-        logger.info(f"项目创建成功: project_id={db_project.id}, user_id={user_id}")
-        
+
+        # 卡牌模式：初始化世界卡、主线与 3 个章节，让工作台打开即有结构
+        if db_project.creation_mode == "storycard":
+            from app.services.storycard_service import initialize_storycard
+            try:
+                await initialize_storycard(db_project, db)
+                await db.commit()
+                await db.refresh(db_project)
+            except Exception as init_error:
+                logger.warning(f"卡牌工作区初始化失败（项目已创建）: {init_error}")
+
+        logger.info(f"项目创建成功: project_id={db_project.id}, user_id={user_id}, mode={db_project.creation_mode}")
+
         return db_project
     except HTTPException:
         raise
@@ -329,7 +346,14 @@ async def delete_project(
             delete(Foreshadow).where(Foreshadow.project_id == project_id)
         )
         logger.debug(f"删除伏笔数: {foreshadows_result.rowcount}")
-        
+
+        # 13. 删除故事卡牌数据
+        await db.execute(delete(StoryCardEdge).where(StoryCardEdge.project_id == project_id))
+        await db.execute(delete(StoryChain).where(StoryChain.project_id == project_id))
+        await db.execute(delete(StoryChapter).where(StoryChapter.project_id == project_id))
+        await db.execute(delete(StoryCard).where(StoryCard.project_id == project_id))
+        logger.debug("删除故事卡牌数据完成")
+
         # 最后删除项目本身
         await db.delete(project)
         await db.commit()

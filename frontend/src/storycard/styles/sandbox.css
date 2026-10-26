@@ -1,0 +1,203 @@
+/* 故事卡牌工作台的外壳隔离：不影响原模式 AntD 布局 */
+.storycard-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg-0);
+  color: var(--text);
+}
+
+.storycard-root .app {
+  height: 100%;
+}
+
+.storycard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--text-dim);
+  font-family: var(--font-body);
+}
+
+.storycard-loading .ant-spin-dot-item {
+  background: var(--brass);
+}
+
+.storycard-error-card {
+  max-width: 460px;
+  padding: 28px 30px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(30, 23, 16, 0.96), rgba(15, 11, 8, 0.96));
+  box-shadow: var(--shadow-2);
+}
+
+.storycard-error-card h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  color: var(--parchment);
+}
+
+.storycard-error-card p {
+  color: var(--text-dim);
+  margin: 0 0 18px;
+  line-height: 1.7;
+}
+
+.brand-back {
+  flex: 0 0 auto;
+  margin-right: 2px;
+  font-size: 17px;
+  color: var(--text-dim);
+}
+
+.brand-back:hover {
+  color: var(--brass-2);
+}
+
+.save-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 6px 1px 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  vertical-align: middle;
+}
+
+.save-dot.saving {
+  background: var(--amber);
+  animation: save-pulse 0.9s ease-in-out infinite;
+}
+
+.save-dot.saved {
+  background: var(--jade);
+}
+
+.save-dot.error {
+  background: var(--crimson-2);
+}
+
+@keyframes save-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* 首次进入 / 空工作区引导 */
+.onboarding-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(700px 380px at 50% 38%, rgba(201, 162, 39, 0.08), transparent 70%),
+    rgba(8, 6, 4, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.onboarding-card {
+  width: min(620px, 100%);
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+  padding: 30px 32px 24px;
+  border: 1px solid rgba(110, 86, 44, 0.5);
+  border-radius: 14px;
+  background:
+    radial-gradient(500px 260px at 12% -10%, rgba(255, 255, 255, 0.55), transparent 60%),
+    linear-gradient(180deg, #f2e6cb, #e2d0a9);
+  box-shadow: var(--shadow-2), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  color: var(--ink);
+}
+
+.onboarding-card .editor-kicker {
+  color: #8f6f1d;
+}
+
+.onboarding-title {
+  margin: 6px 0 10px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: var(--ink);
+}
+
+.onboarding-text {
+  margin: 0 0 20px;
+  color: rgba(43, 33, 24, 0.72);
+  font-size: 12.5px;
+  line-height: 1.9;
+}
+
+.onboarding-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.onboarding-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(110, 86, 44, 0.25);
+  color: rgba(43, 33, 24, 0.55);
+  font-size: 10.5px;
+}
+
+.onboarding-foot .save-dot {
+  margin-left: 0;
+}
+
+.link-btn {
+  margin-left: 6px;
+  padding: 0;
+  color: #8f6f1d;
+  border-bottom: 1px dashed rgba(110, 86, 44, 0.45);
+  background: none;
+  font-size: 10.5px;
+}
+
+.link-btn:hover {
+  color: var(--ink);
+}
+
+/* 模态/Toast 通过 portal 挂到 body，用一个独立的作用域壳承接变量与样式 */
+.storycard-root.storycard-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  width: 100vw;
+  height: 100vh;
+  overflow: visible;
+  background: transparent;
+  pointer-events: none;
+}
+
+.storycard-root.storycard-portal .modal-backdrop {
+  pointer-events: auto;
+}
+
+.storycard-root.storycard-portal .toast-stack {
+  pointer-events: none;
+}
+
+/* 桌面端把 toast 放到左下，避开右侧编辑面板 */
+.storycard-root .toast-stack {
+  right: auto;
+  left: 24px;
+  top: auto;
+  bottom: 152px;
+  align-items: flex-start;
+}

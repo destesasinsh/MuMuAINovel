@@ -18,6 +18,7 @@ import MCPPluginsPage from './MCPPlugins';
 import PromptTemplates from './PromptTemplates';
 import BookImport from './BookImport';
 import BookshelfPage from './BookshelfPage';
+import StoryCardCreateModal from '../components/StoryCardCreateModal';
 import { getStoredSidebarCollapsed, setStoredSidebarCollapsed } from '../utils/sidebarState';
 import AnnouncementTimelineModal from '../components/AnnouncementTimelineModal';
 import { useAnnouncements } from '../hooks/useAnnouncements';
@@ -66,6 +67,7 @@ export default function ProjectList() {
   const [showApiTip, setShowApiTip] = useState(true);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
+  const [storyCardModalVisible, setStoryCardModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [validationResult, setValidationResult] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [importing, setImporting] = useState(false);
@@ -173,6 +175,10 @@ export default function ProjectList() {
   };
 
   const handleEnterProject = async (project: Project) => {
+    if (project.creation_mode === 'storycard') {
+      navigate(`/project/${project.id}/storycard`);
+      return;
+    }
     if (project.wizard_status === 'incomplete') {
       navigate(`/wizard?project_id=${project.id}`);
     } else {
@@ -908,6 +914,7 @@ export default function ProjectList() {
               onGoSettings={() => changeView('settings')}
               onStartWizard={() => navigate('/wizard')}
               onOpenInspiration={() => navigate('/inspiration')}
+              onOpenStoryCard={() => setStoryCardModalVisible(true)}
               onEnterProject={handleEnterProject}
               onDeleteProject={handleDelete}
               onGenerateCover={handleGenerateCover}
@@ -924,6 +931,15 @@ export default function ProjectList() {
         <ChangelogFloatingButton />
         </div>
       </div>
+
+      <StoryCardCreateModal
+        open={storyCardModalVisible}
+        onClose={() => setStoryCardModalVisible(false)}
+        onCreated={(project) => {
+          void refreshProjects();
+          navigate(`/project/${project.id}/storycard`);
+        }}
+      />
 
       <AnnouncementTimelineModal
         visible={announcementVisible}

@@ -15,6 +15,10 @@ class ProjectBase(BaseModel):
         default="one-to-many",
         description="大纲章节模式: one-to-one(传统模式,1大纲→1章节) 或 one-to-many(细化模式,1大纲→N章节)"
     )
+    creation_mode: Literal["classic", "storycard"] = Field(
+        default="classic",
+        description="创作模式: classic(原模式) / storycard(故事卡牌模式)"
+    )
 
 
 class ProjectCreate(ProjectBase):
@@ -61,6 +65,7 @@ class ProjectResponse(ProjectBase):
     cover_error: Optional[str] = None
     cover_updated_at: Optional[datetime] = None
     outline_mode: str  # 显式声明以确保响应中包含
+    storycard_revision: Optional[int] = None
     created_at: datetime
     updated_at: datetime
     

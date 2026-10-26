@@ -21,6 +21,8 @@ class Project(Base):
     wizard_status = Column(String(20), default="incomplete", comment="向导完成状态: incomplete/completed")
     wizard_step = Column(Integer, default=0, comment="向导当前步骤: 0-4")
     outline_mode = Column(String(20), nullable=False, default="one-to-many", comment="大纲章节模式: one-to-one(传统模式) 或 one-to-many(细化模式)")
+    creation_mode = Column(String(20), nullable=False, default="classic", server_default="classic", comment="创作模式: classic(原模式) / storycard(故事卡牌模式)")
+    storycard_revision = Column(Integer, nullable=False, default=0, server_default="0", comment="故事卡牌工作区版本号（乐观锁）")
     
     # 世界构建字段
     world_time_period = Column(Text, comment="时间背景")

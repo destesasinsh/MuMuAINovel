@@ -25,6 +25,7 @@ from app.models import (
     BackgroundTask, Announcement,
     AgentConversation, AgentMessage, AgentToolCall, AgentExecutionStep,
     KnowledgeBase, KnowledgeDocument, KnowledgeChunk,
+    StoryCard, StoryCardEdge, StoryChain, StoryChapter,
 )
 
 # 引擎缓存：每个用户一个引擎

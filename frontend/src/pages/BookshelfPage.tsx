@@ -1,5 +1,5 @@
 import { Card, Button, Spin, Space, Tag, Typography, Alert, theme } from 'antd';
-import { BookOutlined, RocketOutlined, BulbOutlined, UploadOutlined, DownloadOutlined, LoadingOutlined, CalendarOutlined, DeleteOutlined, CheckCircleOutlined, EditOutlined, PauseCircleOutlined, PictureOutlined, SwapOutlined, ReloadOutlined } from '@ant-design/icons';
+import { BookOutlined, RocketOutlined, BulbOutlined, AppstoreOutlined, UploadOutlined, DownloadOutlined, LoadingOutlined, CalendarOutlined, DeleteOutlined, CheckCircleOutlined, EditOutlined, PauseCircleOutlined, PictureOutlined, SwapOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Project } from '../types';
@@ -20,6 +20,7 @@ interface BookshelfPageProps {
   onGoSettings: () => void;
   onStartWizard: () => void;
   onOpenInspiration: () => void;
+  onOpenStoryCard: () => void;
   onEnterProject: (project: Project) => void;
   onDeleteProject: (projectId: string) => void;
   onGenerateCover: (project: Project, overwrite?: boolean) => void | Promise<void>;
@@ -44,6 +45,7 @@ export default function BookshelfPage({
   onGoSettings,
   onStartWizard,
   onOpenInspiration,
+  onOpenStoryCard,
   onEnterProject,
   onDeleteProject,
   onGenerateCover,
@@ -326,6 +328,22 @@ export default function BookshelfPage({
                   </Button>
                   <Button
                     size={isMobile ? 'middle' : 'large'}
+                    icon={<AppstoreOutlined />}
+                    onClick={onOpenStoryCard}
+                    style={{
+                      height: isMobile ? 42 : 52,
+                      fontSize: isMobile ? '14px' : '16px',
+                      borderRadius: 10,
+                      borderColor: alphaColor(token.colorSuccess, isDark ? 0.4 : 0.55),
+                      color: `color-mix(in srgb, ${token.colorSuccess} ${isDark ? 78 : 72}%, ${token.colorText} ${isDark ? 22 : 28}%)`,
+                      background: `linear-gradient(180deg, ${alphaColor(token.colorSuccess, 0.1)} 0%, ${alphaColor(token.colorSuccess, 0.18)} 100%)`,
+                    }}
+                    block
+                  >
+                    卡牌模式
+                  </Button>
+                  <Button
+                    size={isMobile ? 'middle' : 'large'}
                     icon={<BulbOutlined />}
                     onClick={onOpenInspiration}
                     style={{
@@ -510,6 +528,23 @@ export default function BookshelfPage({
                             minHeight: isMobile ? 20 : 22,
                             alignItems: 'flex-start',
                           }}>
+                            <Tag style={{
+                              margin: 0,
+                              padding: isMobile ? '0 7px' : '0 8px',
+                              borderRadius: 999,
+                              border: project.creation_mode === 'storycard'
+                                ? '1px solid rgba(126, 255, 178, 0.55)'
+                                : '1px solid rgba(255, 255, 255, 0.28)',
+                              background: project.creation_mode === 'storycard'
+                                ? 'rgba(31, 122, 74, 0.45)'
+                                : 'rgba(255, 255, 255, 0.12)',
+                              color: project.creation_mode === 'storycard' ? '#CFFFE2' : 'rgba(255,255,255,0.86)',
+                              fontSize: isMobile ? 10 : 11,
+                              lineHeight: isMobile ? '18px' : '20px',
+                              fontWeight: 600,
+                            }}>
+                              {project.creation_mode === 'storycard' ? '卡牌模式' : '原模式'}
+                            </Tag>
                             {tags.length > 0 ? tags.slice(0, 3).map((tag: string, idx: number) => (
                               <Tag key={idx} style={{
                                 margin: 0,
@@ -756,6 +791,12 @@ export default function BookshelfPage({
                                 minHeight: isMobile ? 20 : 22,
                                 alignItems: 'flex-start',
                               }}>
+                                <Tag
+                                  color={project.creation_mode === 'storycard' ? 'green' : 'default'}
+                                  style={{ margin: 0, borderRadius: 999 }}
+                                >
+                                  {project.creation_mode === 'storycard' ? '卡牌模式' : '原模式'}
+                                </Tag>
                                 {tags.length > 0 ? tags.slice(0, 3).map((tag: string, idx: number) => (
                                   <Tag key={idx} style={{
                                     margin: 0,
